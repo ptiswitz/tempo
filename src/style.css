@@ -48,6 +48,10 @@ body {
   border-width: 0;
 }
 
+#app {
+  flex: 1;
+}
+
 .container {
   width: 90%;
   max-width: 500px;
