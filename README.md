@@ -36,7 +36,7 @@ Tempo features a modern dark mode interface with subtle purple accents, designed
 
 ## Getting Started
 
-Simply open the index.html file in your web browser to start using Tempo. No installation or setup required.
+TBD
 
 ## Future Enhancements
 
