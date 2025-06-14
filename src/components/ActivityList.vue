@@ -105,4 +105,10 @@ const totalTimeLabel = computed(() => {
 .clear-link:hover {
     text-decoration: none;
 }
+
+.clear-link:focus-visible {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
 </style>
