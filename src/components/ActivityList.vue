@@ -57,7 +57,7 @@ const totalTimeLabel = computed(() => {
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-    padding-right: var(--spacing-small); /* For scrollbar */
+    padding: var(--spacing-small); /* For scrollbar */
     margin-bottom: var(--spacing-medium); /* Space before total */
 }
 
