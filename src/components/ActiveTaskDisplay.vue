@@ -39,8 +39,7 @@ function cancelEdit() {
   editableName.value = props.taskName;
   isEditing.value = false;
 }
-        @keydown.space.prevent="cancelEdit"
-
+        
 const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds));
 </script>
 
@@ -54,6 +53,7 @@ const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds)
         type="text"
         v-model="editableName"
         @keydown.enter.prevent="confirmEdit"
+        @keydown.escape.prevent="cancelEdit"
         @blur="confirmEdit"
         class="rename-input"
       />
