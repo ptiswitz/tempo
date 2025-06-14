@@ -71,6 +71,13 @@ function resumeTracking() {
   announceToScreenReader(`Resumed tracking: ${currentTask.value.name}`);
 }
 
+function renameCurrentTask(newName: string) {
+  if (currentTask.value) {
+    currentTask.value.name = newName;
+    announceToScreenReader(`Renamed task to ${newName}`);
+  }
+}
+
 function stopTracking() {
   if (!isTracking.value || !currentTask.value) return; // Prevent stopping if not tracking
 
@@ -205,6 +212,7 @@ function clearActivity() {
           v-if="isTracking && currentTask"
           :task-name="currentTask.name"
           :elapsed-seconds="currentTask.elapsedSeconds"
+          @rename="renameCurrentTask"
         />
 
         <ActivityList
