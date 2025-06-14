@@ -23,7 +23,7 @@ const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds)
     background-color: rgba(124, 77, 255, 0.1);
     padding: var(--spacing-medium);
     border-radius: var(--border-radius);
-    margin-top: var(--spacing-medium);
+    margin: var(--spacing-medium);
     border-left: 3px solid var(--color-primary);
 }
 
