@@ -35,6 +35,12 @@ function confirmEdit() {
   isEditing.value = false;
 }
 
+function cancelEdit() {
+  editableName.value = props.taskName;
+  isEditing.value = false;
+}
+        @keydown.space.prevent="cancelEdit"
+
 const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds));
 </script>
 
