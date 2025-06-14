@@ -97,4 +97,9 @@ const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds)
     padding: 2px 4px;
     width: 100%;
 }
+
+.rename-input:focus-visible {
+    outline: 3px solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
 </style>
