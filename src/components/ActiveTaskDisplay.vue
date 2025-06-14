@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch, nextTick } from 'vue';
 import { formatSecondsToHHMMSS } from '../utils/formatTime';
 
 const props = defineProps<{
@@ -7,12 +7,57 @@ const props = defineProps<{
   elapsedSeconds: number;
 }>();
 
+const emit = defineEmits(['rename']);
+
+const isEditing = ref(false);
+const editableName = ref(props.taskName);
+const inputRef = ref<HTMLInputElement | null>(null);
+
+watch(
+  () => props.taskName,
+  (newName) => {
+    if (!isEditing.value) {
+      editableName.value = newName;
+    }
+  }
+);
+
+function startEditing() {
+  isEditing.value = true;
+  editableName.value = props.taskName;
+  nextTick(() => {
+    inputRef.value?.focus();
+  });
+}
+
+function confirmEdit() {
+  emit('rename', editableName.value.trim() || props.taskName);
+  isEditing.value = false;
+}
+
+function cancelEdit() {
+  editableName.value = props.taskName;
+  isEditing.value = false;
+}
+        
 const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds));
 </script>
 
 <template>
   <div class="active-task" aria-live="polite">
-    <div class="active-task-name">{{ taskName }}</div>
+    <div class="active-task-name">
+      <span v-if="!isEditing" @click="startEditing">{{ taskName }}</span>
+      <input
+        v-else
+        ref="inputRef"
+        type="text"
+        v-model="editableName"
+        @keydown.enter.prevent="confirmEdit"
+        @keydown.escape.prevent="cancelEdit"
+        @blur="confirmEdit"
+        class="rename-input"
+      />
+    </div>
     <div class="timer-display" aria-label="Time elapsed">{{ formattedTime }}</div>
   </div>
 </template>
@@ -38,6 +83,10 @@ const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds)
     white-space: nowrap;
 }
 
+.active-task-name:has(input) {
+  overflow: visible;
+}
+
 .timer-display {
     /* margin-top: var(--spacing-medium); remove? Already spaced by active-task padding */
     text-align: center;
@@ -46,5 +95,21 @@ const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds)
     color: var(--color-on-surface);
     font-variant-numeric: tabular-nums;
     letter-spacing: 2px;
+}
+
+.rename-input {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--color-on-surface);
+    background-color: transparent;
+    border: 1px solid var(--color-surface-variant);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-medium);
+    width: 100%;
+}
+
+.rename-input:focus-visible {
+    outline: 3px solid var(--focus-ring-color);
+    outline-offset: 2px;
 }
 </style>
