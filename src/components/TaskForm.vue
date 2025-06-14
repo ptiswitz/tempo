@@ -61,7 +61,7 @@ function handleKeydown(event: KeyboardEvent) {
         type="button"
         id="trackButton"
         :class="buttonClass"
-        :aria-pressed="isTracking.toString()"
+        :aria-pressed="isTracking"
         @click="handleTrackButtonClick"
       >
         {{ buttonText }}
