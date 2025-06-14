@@ -34,6 +34,10 @@ const timeLabel = computed(() => {
     transition: all 0.2s ease;
 }
 
+.task-item:last-child {
+    margin-bottom: 0;
+}
+
 .task-item:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
