@@ -9,6 +9,8 @@ const props = defineProps<{
   totalDurationSeconds: number;
 }>();
 
+const emit = defineEmits(['clear']);
+
 const formattedTotalTime = computed(() => formatSecondsToHHMMSS(props.totalDurationSeconds));
 
 const totalTimeLabel = computed(() => {
@@ -34,6 +36,13 @@ const totalTimeLabel = computed(() => {
       <div>Total</div>
       <div :aria-label="totalTimeLabel">{{ formattedTotalTime }}</div>
     </div>
+
+    <a
+      href="#"
+      class="clear-link"
+      v-if="tasks.length > 0"
+      @click.prevent="emit('clear')"
+    >Clear Activity</a>
   </section>
 </template>
 
@@ -83,5 +92,17 @@ const totalTimeLabel = computed(() => {
     color: var(--color-on-surface);
     font-weight: 500;
     font-variant-numeric: tabular-nums;
+}
+
+.clear-link {
+    margin-top: var(--spacing-small);
+    display: inline-block;
+    color: var(--color-primary);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.clear-link:hover {
+    text-decoration: none;
 }
 </style>

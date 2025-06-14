@@ -116,6 +116,15 @@ watch(completedTasks, (newTasks) => {
     }
 
 }, { deep: true }); // Use deep watch for changes within the array/objects
+function clearActivity() {
+  completedTasks.value = [];
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {
+    console.error('Failed to clear tasks from localStorage', e);
+  }
+}
+
 
 
 </script>
@@ -165,6 +174,7 @@ watch(completedTasks, (newTasks) => {
         <ActivityList
           :tasks="completedTasks"
           :total-duration-seconds="totalDurationSeconds"
+          @clear="clearActivity"
         />
       </main>
     </div>
