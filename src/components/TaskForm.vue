@@ -2,13 +2,14 @@
 import { ref, computed } from 'vue';
 
 const taskName = defineModel<string>('taskName', { default: '' });
-const props = defineProps<{ isTracking: boolean }>();
-const emit = defineEmits(['start', 'stop']);
+const props = defineProps<{ isTracking: boolean; isPaused: boolean }>();
+const emit = defineEmits(['start', 'stop', 'pause', 'resume']);
 
 const inputRef = ref<HTMLInputElement | null>(null); // To focus input after stop
 
 const buttonText = computed(() => props.isTracking ? 'Stop Tracking' : 'Start Tracking');
 const buttonClass = computed(() => props.isTracking ? 'action-button tracking' : 'action-button');
+const pauseButtonText = computed(() => props.isPaused ? 'Resume' : 'Pause');
 
 function handleSubmit() {
   // Prevent form submission if used inside a <form> tag
@@ -23,6 +24,14 @@ function handleTrackButtonClick() {
     // Use 'Unnamed Task' if input is empty, trim whitespace
     const nameToTrack = taskName.value.trim() || 'Unnamed Task';
     emit('start', nameToTrack);
+  }
+}
+
+function handlePauseButtonClick() {
+  if (props.isPaused) {
+    emit('resume');
+  } else {
+    emit('pause');
   }
 }
 
@@ -65,6 +74,16 @@ function handleKeydown(event: KeyboardEvent) {
         @click="handleTrackButtonClick"
       >
         {{ buttonText }}
+      </button>
+      <button
+        v-if="isTracking"
+        type="button"
+        id="pauseButton"
+        class="pause-button"
+        :aria-pressed="isPaused"
+        @click="handlePauseButtonClick"
+      >
+        {{ pauseButtonText }}
       </button>
     </form>
   </section>
@@ -153,6 +172,23 @@ function handleKeydown(event: KeyboardEvent) {
 
 .action-button.tracking {
     background: linear-gradient(45deg, var(--color-error), #ff1744);
+}
+
+.pause-button {
+    width: 100%;
+    margin-top: var(--spacing-small);
+    background-color: var(--color-surface-variant);
+    color: var(--color-on-surface);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-medium);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pause-button:hover:not(:disabled) {
+    background-color: var(--color-surface-variant-hover, #444);
 }
 
 /* High contrast mode adjustments */

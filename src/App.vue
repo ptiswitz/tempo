@@ -15,10 +15,19 @@ const screenReaderAnnouncer = ref<HTMLDivElement | null>(null);
 
 // Computed Properties
 const isTracking = computed(() => currentTask.value !== null);
+const isPaused = computed(() => currentTask.value?.isPaused ?? false);
 
 const totalDurationSeconds = computed(() => {
   return completedTasks.value.reduce((total, task) => total + task.durationSeconds, 0);
 });
+
+function updateElapsed() {
+  if (currentTask.value && !currentTask.value.isPaused) {
+    currentTask.value.elapsedSeconds =
+      currentTask.value.accumulatedSeconds +
+      Math.floor((Date.now() - currentTask.value.lastResumeTime) / 1000);
+  }
+}
 
 // Methods
 function startTracking(taskName: string) {
@@ -28,20 +37,38 @@ function startTracking(taskName: string) {
     id: `task-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     name: taskName,
     startTime: Date.now(),
+    lastResumeTime: Date.now(),
     elapsedSeconds: 0,
+    accumulatedSeconds: 0,
+    isPaused: false,
   };
   currentTask.value = newTask;
   taskNameInput.value = ''; // Clear input after starting
 
   // Start the timer interval
-  timerInterval.value = window.setInterval(() => {
-    if (currentTask.value) {
-      // Ensure elapsedSeconds calculation is based on start time for accuracy
-      currentTask.value.elapsedSeconds = Math.floor((Date.now() - currentTask.value.startTime) / 1000);
-    }
-  }, 1000);
+  timerInterval.value = window.setInterval(updateElapsed, 1000);
 
   announceToScreenReader(`Started tracking: ${taskName}`);
+}
+
+function pauseTracking() {
+  if (!isTracking.value || !currentTask.value || currentTask.value.isPaused) return;
+  if (timerInterval.value) {
+    clearInterval(timerInterval.value);
+    timerInterval.value = null;
+  }
+  updateElapsed();
+  currentTask.value.accumulatedSeconds = currentTask.value.elapsedSeconds;
+  currentTask.value.isPaused = true;
+  announceToScreenReader(`Paused tracking: ${currentTask.value.name}`);
+}
+
+function resumeTracking() {
+  if (!isTracking.value || !currentTask.value || !currentTask.value.isPaused) return;
+  currentTask.value.isPaused = false;
+  currentTask.value.lastResumeTime = Date.now();
+  timerInterval.value = window.setInterval(updateElapsed, 1000);
+  announceToScreenReader(`Resumed tracking: ${currentTask.value.name}`);
 }
 
 function stopTracking() {
@@ -53,12 +80,18 @@ function stopTracking() {
     timerInterval.value = null;
   }
 
+  if (!currentTask.value.isPaused) {
+    updateElapsed();
+    currentTask.value.accumulatedSeconds = currentTask.value.elapsedSeconds;
+  }
+
   const endTime = Date.now();
-  // Final duration calculation
-  const durationSeconds = Math.floor((endTime - currentTask.value.startTime) / 1000);
+  const durationSeconds = currentTask.value.elapsedSeconds;
 
   const finishedTask: CompletedTask = {
-    ...currentTask.value,
+    id: currentTask.value.id,
+    name: currentTask.value.name,
+    startTime: currentTask.value.startTime,
     endTime: endTime,
     durationSeconds: durationSeconds,
   };
@@ -152,8 +185,11 @@ watch(completedTasks, (newTasks) => {
         <TaskForm
           v-model:taskName="taskNameInput"
           :is-tracking="isTracking"
+          :is-paused="isPaused"
           @start="startTracking"
           @stop="stopTracking"
+          @pause="pauseTracking"
+          @resume="resumeTracking"
         />
 
         <ActiveTaskDisplay
