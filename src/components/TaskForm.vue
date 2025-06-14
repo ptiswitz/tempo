@@ -190,8 +190,8 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 .pause-button.pause {
-    background-color: var(--color-surface-variant);
-    color: var(--color-on-surface);
+    background: linear-gradient(45deg, var(--color-warning), var(--color-warning-variant));
+    color: var(--color-on-primary);
 }
 
 .pause-button.resume {
