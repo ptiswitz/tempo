@@ -77,6 +77,10 @@ const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds)
     white-space: nowrap;
 }
 
+.active-task-name:has(input) {
+  overflow: visible;
+}
+
 .timer-display {
     /* margin-top: var(--spacing-medium); remove? Already spaced by active-task padding */
     text-align: center;
@@ -88,13 +92,13 @@ const formattedTime = computed(() => formatSecondsToHHMMSS(props.elapsedSeconds)
 }
 
 .rename-input {
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 400;
     color: var(--color-on-surface);
     background-color: transparent;
     border: 1px solid var(--color-surface-variant);
     border-radius: var(--border-radius);
-    padding: 2px 4px;
+    padding: var(--spacing-medium);
     width: 100%;
 }
 
