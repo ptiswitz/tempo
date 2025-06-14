@@ -2,13 +2,17 @@
 import { ref, computed } from 'vue';
 
 const taskName = defineModel<string>('taskName', { default: '' });
-const props = defineProps<{ isTracking: boolean }>();
-const emit = defineEmits(['start', 'stop']);
+const props = defineProps<{ isTracking: boolean; isPaused: boolean }>();
+const emit = defineEmits(['start', 'stop', 'pause', 'resume']);
 
 const inputRef = ref<HTMLInputElement | null>(null); // To focus input after stop
 
 const buttonText = computed(() => props.isTracking ? 'Stop Tracking' : 'Start Tracking');
 const buttonClass = computed(() => props.isTracking ? 'action-button tracking' : 'action-button');
+const pauseButtonText = computed(() => props.isPaused ? 'Resume Tracking' : 'Pause Tracking');
+const pauseButtonClass = computed(() =>
+  props.isPaused ? 'pause-button resume' : 'pause-button pause'
+);
 
 function handleSubmit() {
   // Prevent form submission if used inside a <form> tag
@@ -23,6 +27,14 @@ function handleTrackButtonClick() {
     // Use 'Unnamed Task' if input is empty, trim whitespace
     const nameToTrack = taskName.value.trim() || 'Unnamed Task';
     emit('start', nameToTrack);
+  }
+}
+
+function handlePauseButtonClick() {
+  if (props.isPaused) {
+    emit('resume');
+  } else {
+    emit('pause');
   }
 }
 
@@ -65,6 +77,16 @@ function handleKeydown(event: KeyboardEvent) {
         @click="handleTrackButtonClick"
       >
         {{ buttonText }}
+      </button>
+      <button
+        v-if="isTracking"
+        type="button"
+        id="pauseButton"
+        :class="pauseButtonClass"
+        :aria-pressed="isPaused"
+        @click="handlePauseButtonClick"
+      >
+        {{ pauseButtonText }}
       </button>
     </form>
   </section>
@@ -155,6 +177,32 @@ function handleKeydown(event: KeyboardEvent) {
     background: linear-gradient(45deg, var(--color-error), #ff1744);
 }
 
+.pause-button {
+    width: 100%;
+    margin-top: var(--spacing-small);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-medium);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pause-button.pause {
+    background: linear-gradient(45deg, var(--color-warning), var(--color-warning-variant));
+    color: var(--color-on-primary);
+}
+
+.pause-button.resume {
+    background: linear-gradient(45deg, var(--color-primary), var(--color-primary-variant));
+    color: var(--color-on-primary);
+}
+
+.pause-button:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
 /* High contrast mode adjustments */
 @media (forced-colors: active) {
     .action-button {
@@ -176,6 +224,11 @@ function handleKeydown(event: KeyboardEvent) {
         background-color: GrayText;
         border-color: GrayText;
         color: Canvas;
+    }
+    .pause-button {
+        border: 1px solid CanvasText;
+        background: ButtonFace;
+        color: ButtonText;
     }
 }
 </style>
