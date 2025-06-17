@@ -17,7 +17,7 @@ Tempo is a sleek, minimalist time tracking web application designed for professi
 
 ## Design Philosophy
 
-Tempo features a modern dark mode interface with subtle purple accents, designed to reduce eye strain during long work sessions. The minimalist approach ensures that you focus on your work, not on the tool tracking it.
+Tempo features a modern interface with subtle purple accents. A built-in toggle lets you switch between dark and light themes, helping reduce eye strain in any environment. The minimalist approach ensures that you focus on your work, not on the tool tracking it.
 
 ## Accessibility Features
 

@@ -1,4 +1,5 @@
-:root {
+
+:root[data-theme="dark"] {
   --color-background: #121212;
   --color-surface: rgba(30, 30, 30, 0.7);
   --color-primary: #7c4dff;
@@ -16,6 +17,28 @@
   --spacing-small: 8px;
   --spacing-medium: 16px;
   --spacing-large: 24px;
+  --background-gradient: linear-gradient(45deg, #121212 0%, #1e1e1e 100%);
+}
+
+:root[data-theme="light"] {
+  --color-background: #f5f5f5;
+  --color-surface: rgba(255, 255, 255, 0.8);
+  --color-primary: #7c4dff;
+  --color-primary-variant: #536dfe;
+  --color-warning: #ff9800;
+  --color-warning-variant: #ffb74d;
+  --color-error: #ff5252;
+  --color-on-background: #212121;
+  --color-on-surface: #000000;
+  --color-on-primary: #ffffff;
+  --color-on-error: #ffffff;
+  --color-surface-variant: rgba(0, 0, 0, 0.1);
+  --focus-ring-color: rgba(124, 77, 255, 0.5);
+  --border-radius: 8px;
+  --spacing-small: 8px;
+  --spacing-medium: 16px;
+  --spacing-large: 24px;
+  --background-gradient: linear-gradient(45deg, #fafafa 0%, #e0e0e0 100%);
 }
 
 * {
@@ -35,7 +58,7 @@ body {
   align-items: center;
   min-height: 100vh;
   line-height: 1.5;
-  background-image: linear-gradient(45deg, #121212 0%, #1e1e1e 100%);
+  background-image: var(--background-gradient);
 }
 
 .sr-only {
