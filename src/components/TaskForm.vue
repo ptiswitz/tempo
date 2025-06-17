@@ -70,6 +70,7 @@ function handleKeydown(event: KeyboardEvent) {
       </div>
 
       <button
+        v-if="!isTracking"
         type="button"
         id="trackButton"
         :class="buttonClass"
@@ -78,16 +79,26 @@ function handleKeydown(event: KeyboardEvent) {
       >
         {{ buttonText }}
       </button>
-      <button
-        v-if="isTracking"
-        type="button"
-        id="pauseButton"
-        :class="pauseButtonClass"
-        :aria-pressed="isPaused"
-        @click="handlePauseButtonClick"
-      >
-        {{ pauseButtonText }}
-      </button>
+      <div v-else class="button-row">
+        <button
+          type="button"
+          id="pauseButton"
+          :class="pauseButtonClass"
+          :aria-pressed="isPaused"
+          @click="handlePauseButtonClick"
+        >
+          {{ pauseButtonText }}
+        </button>
+        <button
+          type="button"
+          id="trackButton"
+          :class="buttonClass"
+          :aria-pressed="isTracking"
+          @click="handleTrackButtonClick"
+        >
+          {{ buttonText }}
+        </button>
+      </div>
     </form>
   </section>
 </template>
@@ -201,6 +212,18 @@ function handleKeydown(event: KeyboardEvent) {
 
 .pause-button:hover:not(:disabled) {
     filter: brightness(1.1);
+}
+
+.button-row {
+    display: flex;
+    gap: var(--spacing-small);
+    margin-top: var(--spacing-medium);
+}
+
+.button-row .action-button,
+.button-row .pause-button {
+    margin-top: 0;
+    flex: 1;
 }
 
 /* High contrast mode adjustments */
