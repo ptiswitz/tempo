@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount, watch } from 'vue';
+import { ref, computed, onBeforeUnmount, watch, onMounted } from 'vue';
 import TaskForm from './components/TaskForm.vue';
 import ActiveTaskDisplay from './components/ActiveTaskDisplay.vue';
 import ActivityList from './components/ActivityList.vue';
@@ -12,6 +12,34 @@ const currentTask = ref<CurrentTask | null>(null);
 const completedTasks = ref<CompletedTask[]>([]);
 const timerInterval = ref<number | null>(null);
 const screenReaderAnnouncer = ref<HTMLDivElement | null>(null);
+
+// Theme handling
+const theme = ref<'light' | 'dark'>('dark');
+
+onMounted(() => {
+  const storedTheme = localStorage.getItem('theme');
+  if (storedTheme === 'light' || storedTheme === 'dark') {
+    theme.value = storedTheme;
+  }
+  document.documentElement.setAttribute('data-theme', theme.value);
+});
+
+watch(theme, (newTheme) => {
+  document.documentElement.setAttribute('data-theme', newTheme);
+  try {
+    localStorage.setItem('theme', newTheme);
+  } catch (e) {
+    console.error('Failed to save theme to localStorage', e);
+  }
+});
+
+const toggleTheme = () => {
+  theme.value = theme.value === 'dark' ? 'light' : 'dark';
+};
+
+const themeLabel = computed(() =>
+  theme.value === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+);
 
 // Computed Properties
 const isTracking = computed(() => currentTask.value !== null);
@@ -195,6 +223,9 @@ function clearActivity() {
             </svg>
             <h1 class="app-title">Tempo</h1>
         </div>
+        <button class="theme-toggle" @click="toggleTheme" :aria-label="themeLabel">
+          {{ theme === 'dark' ? 'Light' : 'Dark' }} Mode
+        </button>
       </header>
 
       <main>
@@ -248,6 +279,7 @@ function clearActivity() {
     align-items: center;
     justify-content: center; /* Center brand */
     border-bottom: 1px solid var(--color-surface-variant);
+    position: relative;
 }
 
 .brand {
@@ -258,6 +290,22 @@ function clearActivity() {
 
 .logo {
     margin-right: var(--spacing-medium);
+}
+
+.theme-toggle {
+    position: absolute;
+    top: var(--spacing-small);
+    right: var(--spacing-small);
+    background: none;
+    border: none;
+    color: var(--color-on-surface);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
 }
 
 .app-title {
@@ -305,6 +353,11 @@ main {
     }
      .logo circle[fill="white"] {
         fill: Canvas; /* Make inner dot background color */
+    }
+    .theme-toggle {
+        color: ButtonText;
+        background: ButtonFace;
+        border: 1px solid ButtonText;
     }
 }
 </style>
